@@ -11,7 +11,7 @@ public class PostModel
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; init; }
     
-    [StringLength(100)]
+    [StringLength(10485760)]
     public string Title { get; set; } = string.Empty;
     
     [MaxLength(10485760)]
@@ -19,6 +19,10 @@ public class PostModel
     
     [MaxLength(255)]
     public string FileName { get; set; } = string.Empty;
+    
     [MaxLength(10)]
     public string FileExtension { get; set; } = string.Empty;
+    
+    [MaxLength(10485760)]
+    public string ImageUrl { get; set; } = string.Empty;
 }

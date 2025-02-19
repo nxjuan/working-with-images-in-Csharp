@@ -24,7 +24,7 @@ namespace pinterestapi.Service.PostService
                 
                 response.Data = post.Id.ToString();
                 response.Success = true;
-                response.Message = "Post successfully added";
+                response.Message = "Post successfully added: " + post.ImageBase64.Length + " bytes";
             }
             catch (Exception e)
             {

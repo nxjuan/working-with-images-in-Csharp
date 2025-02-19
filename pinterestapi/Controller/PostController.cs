@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using pinterestapi.Model;
 using pinterestapi.Service.PostService;
-using System.Threading.Tasks;
-using System.IO;
-using Microsoft.AspNetCore.Components.Web;
 using pinterestapi.DataContext;
 
 namespace pinterestapi.Controller;
@@ -31,7 +28,8 @@ public class PostController : ControllerBase
         }
         byte[] imageBytes = Convert.FromBase64String(response.Data.ImageBase64);
         string extension = response.Data.FileExtension.Replace(".", "").ToLower();
-        return File(imageBytes, "image/" + extension);
+        string mimeType = "image/" + extension;
+        return File(imageBytes, mimeType);
     }
 
     [HttpPost]
@@ -43,15 +41,20 @@ public class PostController : ControllerBase
         }
 
         using var memoryStream = new MemoryStream();
+        string fileExtension = Path.GetExtension(imageFile.FileName).ToLower();
+        
         await imageFile.CopyToAsync(memoryStream);
         string base64Image = Convert.ToBase64String(memoryStream.ToArray());
+        
+        if(base64Image.Length > 10485760)
+            return BadRequest("A imagem excede o tamanho máximo permitido.");
 
         var post = new PostModel
         {
             Title = title,
             ImageBase64 = base64Image,
             FileName = Path.GetFileName(imageFile.FileName),
-            FileExtension =  Path.GetExtension(imageFile.FileName)
+            FileExtension =  fileExtension
         };
 
         var response = await _postInterface.PostAsync(post);
